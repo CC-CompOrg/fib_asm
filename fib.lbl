@@ -39,7 +39,7 @@ copy r14 r15
 addn r14 -1
 loadr r13 r14
 ## Move to the caller's stackframe
-loard r15 r15
+loadr r15 r15
 ## actually return to caller
 jumpr r13
 
@@ -63,6 +63,10 @@ storer r1 r14
 addn r15 -3
 calln r1 :fib:
 
-# store the return value in z
+# store the return value in z -- r1 will hold the return value by convention
+copy r14 r15
+addn r14 -2
+storer r1 r14
+
 # Declare victory
 halt
