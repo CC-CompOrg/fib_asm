@@ -3,6 +3,8 @@
 # Program conventions:
 # * r15 always holds the base of the currently executing stack frame
 # * main stack frame at 0xFF with baseptr and retptr = 0
+# * when a function is called, r1 will hold the returnptr value
+# * when a function returns, r1 will hold the return value
 
 ############################################
 # Init things before starting main
@@ -22,6 +24,9 @@ jumpn :main:  # start executing main
 # n       = -2
 # retptr  = -1
 # baseptr = -0
+:fib:
+## STUBBED - for now just return without doing anything
+jumpr r1
 
 ############################################
 # main
@@ -30,7 +35,19 @@ jumpn :main:  # start executing main
 # retptr  = -1
 # baseptr = -0
 :main:
-# call fib(n)
+# call fib(n) :: init fib's frame then jump
+## set baseptr in new frame
+copy r14 r15
+addn r14 -3
+storer r15 r14
+## set n in new frame
+setn r1 5
+addn r14 -2
+storer r1 r14
+## Change which frame is currently executing and jump to the function
+addn r15 -3
+calln r1 :fib:
+
 # store the return value in z
 # Declare victory
 halt
