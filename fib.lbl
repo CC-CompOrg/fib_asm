@@ -31,9 +31,28 @@ copy r14 r15
 addn r14 -1
 storer r1 r14
 
-## LOGIC STUBBED - Skip the function body for now ##
+# if n<2 then
+## load n
+copy r14 r15
+addn r14 -2
+loadr r5 r14
+## n<2 ==> (n-2)<0
+addn r5 -2
+jltzn r5 :fib_return1:
+jumpn :fib_skip_true:
+#    return 1
+:fib_return1:
+setn r1 1
+jumpn :fib_return:
+# endif
+:fib_skip_true:
+# a = fib(n-1)
+# b = fib(n-2)
+# c = a+b
+# return c
 
 # Return to the caller
+:fib_return:
 ## load the returnptr
 copy r14 r15
 addn r14 -1
@@ -56,7 +75,7 @@ copy r14 r15
 addn r14 -3
 storer r15 r14
 ## set n in new frame
-setn r1 5
+setn r1 1 # <-- temporarily changed to test the base case
 addn r14 -2
 storer r1 r14
 ## Change which frame is currently executing and jump to the function
