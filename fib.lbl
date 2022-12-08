@@ -25,8 +25,23 @@ jumpn :main:  # start executing main
 # retptr  = -1
 # baseptr = -0
 :fib:
-## STUBBED - for now just return without doing anything
-jumpr r1
+# Finish the stack frame init
+## store the returnptr for the caller
+copy r14 r15
+addn r14 -1
+storer r1 r14
+
+## LOGIC STUBBED - Skip the function body for now ##
+
+# Return to the caller
+## load the returnptr
+copy r14 r15
+addn r14 -1
+loadr r13 r14
+## Move to the caller's stackframe
+loard r15 r15
+## actually return to caller
+jumpr r13
 
 ############################################
 # main
