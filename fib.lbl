@@ -1,7 +1,17 @@
 # HMMM program to recursively compute fibonacci numbers
 
 # Program conventions:
-# r15 always holds the base of the currently executing stack frame
+# * r15 always holds the base of the currently executing stack frame
+# * main stack frame at 0xFF with baseptr and retptr = 0
+
+############################################
+# Init things before starting main
+setn r15 127
+addn r15 127
+storer r0 r15 # set main's retptr
+addn r15 1
+storer r0 r15 # set main's baseptr
+jumpn :main:  # start executing main
 
 ############################################
 # fib(n)
@@ -19,3 +29,8 @@
 # z       = -2
 # retptr  = -1
 # baseptr = -0
+:main:
+# call fib(n)
+# store the return value in z
+# Declare victory
+halt
