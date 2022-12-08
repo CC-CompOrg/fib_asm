@@ -1,1 +1,21 @@
 # HMMM program to recursively compute fibonacci numbers
+
+# Program conventions:
+# r15 always holds the base of the currently executing stack frame
+
+############################################
+# fib(n)
+# Stack Frame structure - 6 bytes
+# a       = -5
+# b       = -4
+# c       = -3
+# n       = -2
+# retptr  = -1
+# baseptr = -0
+
+############################################
+# main
+# Stack Frame structure - 3 bytes
+# z       = -2
+# retptr  = -1
+# baseptr = -0
