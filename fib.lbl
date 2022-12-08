@@ -47,6 +47,28 @@ jumpn :fib_return:
 # endif
 :fib_skip_true:
 # a = fib(n-1)
+## load n and compute n-1
+copy r14 r15
+addn r14 -2
+loadr r5 r14
+addn r5 -1
+## call fib(n) :: init fib's frame then jump
+### set baseptr in new frame
+copy r14 r15
+addn r14 -6
+storer r15 r14
+### set n in new frame
+addn r14 -8
+storer r5 r14
+### Change which frame is currently executing and jump to the function
+addn r15 -6
+calln r1 :fib:
+
+## store the return value in a -- r1 will hold the return value by convention
+copy r14 r15
+addn r14 -5
+storer r1 r14
+
 # b = fib(n-2)
 # c = a+b
 # return c
@@ -75,7 +97,7 @@ copy r14 r15
 addn r14 -3
 storer r15 r14
 ## set n in new frame
-setn r1 1 # <-- temporarily changed to test the base case
+setn r1 2 # <-- temporarily changed to test the fib(n-1) call
 addn r14 -2
 storer r1 r14
 ## Change which frame is currently executing and jump to the function
