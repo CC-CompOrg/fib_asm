@@ -1,5 +1,8 @@
 # Recursive fib without stackframes using pushr/popr
 #   ...hard to debug since the visualizer doesn't have these opcodes
+#   ...but anything a language doesn't have, we can make ourselves. There
+#      is a 2 opcode sequence that does exactly what pushr/popr do, making
+#      transformation pretty much mechanical
 
 # r1 holds the argument when a function is called
 # r13 holds the return value when a function comes back
@@ -24,21 +27,33 @@ halt
 addn r1 -2
 jltzn r1 :ret1:
 # put the return ptr on the stack since we need to recurse
-pushr r14 r15
+#pushr r14 r15
+storer r14 r15
+addn r15 1
 # push n-2 onto the stack for later fib(n-2) call
-pushr r1 r15
+#pushr r1 r15
+storer r1 r15
+addn r15 1
 # compute n-1 for fib call
 addn r1 1 
 # call fib(n-1)
 calln r14 :fib:
 # fib returned... r13 is fib(n-2). pop n-1, push fib(n-2), call fib(n-1)
-popr r1 r15
-pushr r13 r15
+#popr r1 r15
+addn r15 -1
+loadr r1 r15
+#pushr r13 r15
+storer r13 r15
+addn r15 1
 calln r14 :fib:
 # fib returned... pop fib(n-2) add to fib(n-1) and return
-popr r1 r15
+#popr r1 r15
+addn r15 -1
+loadr r1 r15
 add r13 r13 r1
-popr r14 r15
+#popr r14 r15
+addn r15 -1
+loadr r14 r15
 jumpr r14
 
 :ret1:
