@@ -58,6 +58,7 @@ copy r14 r15
 addn r14 -6
 storer r15 r14
 ### set n in new frame
+copy r14 r15
 addn r14 -8
 storer r5 r14
 ### Change which frame is currently executing and jump to the function
@@ -97,7 +98,7 @@ copy r14 r15
 addn r14 -3
 storer r15 r14
 ## set n in new frame
-setn r1 2 # <-- temporarily changed to test the fib(n-1) call
+setn r1 5
 addn r14 -2
 storer r1 r14
 ## Change which frame is currently executing and jump to the function
