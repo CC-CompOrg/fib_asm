@@ -71,8 +71,41 @@ addn r14 -5
 storer r1 r14
 
 # b = fib(n-2)
+## load n and compute n-2
+copy r14 r15
+addn r14 -2
+loadr r5 r14
+addn r5 -2
+## call fib(n) :: init fib's frame then jump
+### set baseptr in new frame
+copy r14 r15
+addn r14 -6
+storer r15 r14
+### set n in new frame
+copy r14 r15
+addn r14 -8
+storer r5 r14
+### Change which frame is currently executing and jump to the function
+addn r15 -6
+calln r1 :fib:
+
+## store the return value in b -- r1 will hold the return value by convention
+copy r14 r15
+addn r14 -4
+storer r1 r14
 # c = a+b
+copy r14 r15
+addn r14 -5
+loadr r2 r14
+add r1 r1 r2
+copy r14 r15
+addn r14 -3
+storer r1 r14
 # return c
+## load c from memory into the return register
+copy r14 r15
+addn r14 -3
+loadr r1 r14
 
 # Return to the caller
 :fib_return:
