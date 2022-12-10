@@ -17,10 +17,8 @@ jumpn :main:  # start executing main
 
 ############################################
 # fib(n)
-# Stack Frame structure - 6 bytes
-# a       = -5
-# b       = -4
-# c       = -3
+# Stack Frame structure - 4 bytes
+# a       = -3
 # n       = -2
 # retptr  = -1
 # baseptr = -0
@@ -47,31 +45,31 @@ jumpn :fib_return:
 # endif
 :fib_skip_true:
 # a = fib(n-1)
-## load n and compute n-1
-copy r14 r15
-addn r14 -2
-loadr r5 r14
-addn r5 -1
+## load n and compute n-1 <-- Don't load it, (n-2)+1 = n-1
+#copy r14 r15
+#addn r14 -2
+#loadr r5 r14
+addn r5 1
 ## call fib(n) :: init fib's frame then jump
 ### set baseptr in new frame
 copy r14 r15
-addn r14 -6
+addn r14 -4
 storer r15 r14
 ### set n in new frame
 copy r14 r15
-addn r14 -8
+addn r14 -6
 storer r5 r14
 ### Change which frame is currently executing and jump to the function
-addn r15 -6
+addn r15 -4
 calln r1 :fib:
 
 ## store the return value in a -- r1 will hold the return value by convention
 copy r14 r15
-addn r14 -5
+addn r14 -3
 storer r1 r14
 
 # b = fib(n-2)
-## load n and compute n-2
+## load n and compute n-2 <-- must reload n because fib(n-1) overwrote the reg
 copy r14 r15
 addn r14 -2
 loadr r5 r14
@@ -79,33 +77,35 @@ addn r5 -2
 ## call fib(n) :: init fib's frame then jump
 ### set baseptr in new frame
 copy r14 r15
-addn r14 -6
+addn r14 -4
 storer r15 r14
 ### set n in new frame
 copy r14 r15
-addn r14 -8
+addn r14 -6
 storer r5 r14
 ### Change which frame is currently executing and jump to the function
-addn r15 -6
+addn r15 -4
 calln r1 :fib:
 
 ## store the return value in b -- r1 will hold the return value by convention
-copy r14 r15
-addn r14 -4
-storer r1 r14
+# <-- won`t need b later, can just work with it in reg
+#copy r14 r15
+#addn r14 -4
+#storer r1 r14
 # c = a+b
+## load a, register was likely reused in fib(n-2)
 copy r14 r15
-addn r14 -5
+addn r14 -3
 loadr r2 r14
 add r1 r1 r2
-copy r14 r15
-addn r14 -3
-storer r1 r14
-# return c
+#copy r14 r15 <-- r1 is never reused, no need to store in memory
+#addn r14 -3
+#storer r1 r14
+# return c <-- Just computed c, don't need to reload
 ## load c from memory into the return register
-copy r14 r15
-addn r14 -3
-loadr r1 r14
+#copy r14 r15
+#addn r14 -3
+#loadr r1 r14
 
 # Return to the caller
 :fib_return:
