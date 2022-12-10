@@ -1,0 +1,46 @@
+# Recursive fib without stackframes using pushr/popr
+#   ...hard to debug since the visualizer doesn't have these opcodes
+
+# r1 holds the argument when a function is called
+# r13 holds the return value when a function comes back
+# r14 holds the instruction pointer 
+# r15 holds the top of the operand stack
+
+# Set the base of the stack
+setn r15 50
+
+# Read in an n to the correct register
+read r1
+
+# Call the fib function
+calln r14 :fib:
+
+# Display the answer and exit
+write r13
+halt
+
+:fib:
+# jump if n<2 to return 1
+addn r1 -2
+jltzn r1 :ret1:
+# put the return ptr on the stack since we need to recurse
+pushr r14 r15
+# push n-2 onto the stack for later fib(n-2) call
+pushr r1 r15
+# compute n-1 for fib call
+addn r1 1 
+# call fib(n-1)
+calln r14 :fib:
+# fib returned... r13 is fib(n-2). pop n-1, push fib(n-2), call fib(n-1)
+popr r1 r15
+pushr r13 r15
+calln r14 :fib:
+# fib returned... pop fib(n-2) add to fib(n-1) and return
+popr r1 r15
+add r13 r13 r1
+popr r14 r15
+jumpr r14
+
+:ret1:
+setn r13 1
+jumpr r14
